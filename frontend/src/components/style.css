@@ -12,6 +12,8 @@
     grid-template-rows: repeat(7, 12px);
     grid-auto-flow: column;
     gap: 3px;
+    padding: 3px;
+    border-radius: 5px;
 
     
 }
@@ -20,18 +22,18 @@
   background-color: #ffffff14;
 }
 .level-33{
-    background-color: #0099ff33;
+    background-color: #00ffff33;
 }
 .level-66{
-    background-color: #0099ff66;
+    background-color: #00ffff66;
 }
 .level-99{
-    background-color: #0099ff99;
+    background-color: #00ffff99;
 }
 .level-cc{
-    background-color: #0099ffcc;
+    background-color: #00ffffcc;
 }
 .level-ff{
-    background-color: #0099ffff;
+    background-color: #00ffffff;
 }
 

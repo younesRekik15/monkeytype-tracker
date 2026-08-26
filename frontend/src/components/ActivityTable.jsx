@@ -1,19 +1,19 @@
-import { useState } from "react"
 import './style.css'
 
 const ActivityTable = ({epochLastDay,testsByDayOrder}) => {
-    const [currentDay, setCurrentDay] = useState(epochLastDay)
-    const previousDay = (currentDay) =>{
-        return new Date(currentDay.getTime() - 86400000)
+    const subtractDay = (currentDay,days) =>{
+        return new Date(currentDay.getTime() - 86400000*days)
     }
 
-    const readableDate = (date) => {
-    
-        const month = date.toLocaleDateString('en-US', { month: 'long' })
-        const day = date.toLocaleDateString('en-US', { day: 'numeric' })
-        const year = date.toLocaleDateString('en-US', { year: 'numeric' })
-        return `${month} ${day} ${year}`
-    };
+    const readableDate = (epoch) => {
+        const date = new Date(epoch)
+        return date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        })
+    }
 
     const dayColorLevel = (testNumber) => {
         if (!testNumber || testNumber === 0) return '00'      // no activity, fully transparent
@@ -26,18 +26,19 @@ const ActivityTable = ({epochLastDay,testsByDayOrder}) => {
 
     const lastDay = new Date(epochLastDay)
     const testsByDayOrderReverse = [...testsByDayOrder].reverse()
-    console.log('lastDay',readableDate(lastDay),'\n-------------')
-    console.log('yesterday',readableDate(previousDay(lastDay)),'\n-------------')
 
 
     return(
         <div className="tests-container">
             
-            {testsByDayOrderReverse.map((tests,index) => {
-                return(
-                    <div key={index} className={`test-box level-${dayColorLevel(tests)}`}></div>
-                )
-            })}
+            {
+                testsByDayOrderReverse.map((tests,index) => {
+                    const currentDay = subtractDay(lastDay, index)
+                    return(
+                        <div key={index} className={`test-box level-${dayColorLevel(tests)}`} title={`${tests?tests===1?'1 test':`${tests} tests`:'no activity'} on ${readableDate(currentDay)}`}></div>
+                    )
+                })
+            }
         </div>
     )
 }

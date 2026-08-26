@@ -1,6 +1,7 @@
 
 
 import { useEffect, useState } from 'react'
+import ActivityTable from './components/ActivityTable'
 
 function App() {
   const [testActivities, setTestActivities] = useState(null)
@@ -19,7 +20,8 @@ function App() {
 
   return (
     <>
-      <p>{JSON.stringify(testActivities)}</p>
+      {testActivities?<ActivityTable epochLastDay={testActivities.lastDay} testsByDayOrder={testActivities.testsByDays}/>:''}
+      
     </>
   )
 }

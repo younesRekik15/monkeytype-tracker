@@ -2,6 +2,9 @@ const { spawn } = require('node:child_process')
 const path = require('node:path')
 const { app, BrowserWindow, screen } = require('electron')
 
+const isPackaged = app.isPackaged
+const basePath = isPackaged ? process.resourcesPath : path.join(__dirname, '..')
+
 const createWindow = () => {
     const { width:screenWidth, height: screenHeight} = screen.getPrimaryDisplay().workAreaSize
     const margin = 20
@@ -18,16 +21,16 @@ const createWindow = () => {
             skipTaskbar: true
             
         })
-    win.loadFile(path.join(__dirname, '..', 'frontend', 'dist', 'index.html'))
+    win.loadFile(path.join(basePath, 'frontend', 'dist', 'index.html'))
 }
 
 app.whenReady().then(() => { 
     
     const backendProcess = spawn('node', [
-    '--env-file=' + path.join(__dirname, '..', '.env'),
+    '--env-file=' + path.join(basePath, '.env'),
     'index.js'
     ], {
-    cwd: path.join(__dirname, '..', 'back'),
+    cwd: path.join(basePath, 'back'),
     stdio: 'inherit'
     })
     createWindow()

@@ -21,6 +21,30 @@
   "devDependencies": {
     "concurrently": "^10.0.5",
     "electron": "^44.0.0",
+    "electron-builder": "^26.15.3",
     "wait-on": "^9.1.0"
+  },
+  "build": {
+    "appId": "com.yourname.monkeytypewidget",
+    "productName": "Monkeytype Widget",
+    "files": ["electron/**/*"],
+    "extraResources": [
+      {
+        "from": "frontend/dist",
+        "to": "frontend/dist"
+      },
+      { 
+        "from": "back",
+        "to": "back",
+        "filter": ["**/*", "!.env"]
+      },
+      {
+        "from": ".env.example",
+        "to": ".env"
+      }
+    ],
+    "mac": { "target": "dmg" },
+    "win": { "target": "nsis" },
+    "linux": { "target": "AppImage" }
   }
 }

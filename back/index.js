@@ -1,10 +1,12 @@
 const express = require('express')
+const cors = require('cors')
 
 const app = express()
 const port = process.env.PORT || 3001
 const monkeytypeApiUrl = 'https://api.monkeytype.com'
 
 app.use(express.json())
+app.use(cors({ origin: 'http://localhost:5173' }))
 
 async function fetchMonkeytype(path) {
   const apeKey = process.env.MONKEYTYPE_API_KEY

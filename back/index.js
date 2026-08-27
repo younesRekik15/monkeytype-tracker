@@ -7,16 +7,16 @@ const monkeytypeApiUrl = 'https://api.monkeytype.com'
 app.use(express.json())
 
 async function fetchMonkeytype(path) {
-  const apiKey = process.env.MONKEYTYPE_API_KEY
+  const apeKey = process.env.MONKEYTYPE_API_KEY
 
-  if (!apiKey) {
+  if (!apeKey) {
     const error = new Error('MONKEYTYPE_API_KEY is not configured on the server.')
     error.status = 500
     throw error
   }
 
   const response = await fetch(`${monkeytypeApiUrl}${path}`, {
-    headers: { Authorization: `ApeKey ${apiKey}` }
+    headers: { Authorization: `ApeKey ${apeKey}` }
   })
   const body = await response.json().catch(() => null)
 

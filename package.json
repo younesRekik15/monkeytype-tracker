@@ -4,7 +4,11 @@
   "description": "",
   "main": "electron/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently -k \"npm --prefix frontend run dev\" \"wait-on http://localhost:5173 && electron . --dev\"",
+    "build:frontend": "npm --prefix frontend run build",
+    "start": "npm run build:frontend && electron .",
+    "lint": "npm --prefix frontend run lint",
+    "package": "npm run build:frontend && electron-builder"
   },
   "repository": {
     "type": "git",
@@ -27,24 +31,39 @@
   "build": {
     "appId": "com.yourname.monkeytypewidget",
     "productName": "Monkeytype Widget",
-    "files": ["electron/**/*"],
+    "files": [
+      "electron/**/*"
+    ],
     "extraResources": [
       {
         "from": "frontend/dist",
         "to": "frontend/dist"
       },
-      { 
+      {
         "from": "back",
         "to": "back",
-        "filter": ["**/*", "!.env"]
+        "filter": [
+          "**/*",
+          "!.env"
+        ]
       },
       {
         "from": ".env.example",
         "to": ".env"
       }
     ],
-    "mac": { "target": "dmg" },
-    "win": { "target": "nsis" },
-    "linux": { "target": "AppImage" }
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
   }
 }

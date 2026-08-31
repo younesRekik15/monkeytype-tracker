@@ -2,23 +2,33 @@ const express = require('express')
 const cors = require('cors')
 
 const app = express()
-const port = process.env.PORT || 3001
+const port = 3001
+const host = '127.0.0.1'
 const monkeytypeApiUrl = 'https://api.monkeytype.com'
 
 app.use(express.json())
-app.use(cors({ origin: 'http://localhost:5173' }))
+app.use(cors({
+  origin(origin, callback) {
+    const isAllowed = !origin || origin === 'null' || origin === 'http://localhost:5173'
+
+    callback(isAllowed ? null : new Error('Origin is not allowed by CORS'), isAllowed)
+  },
+}))
 
 async function fetchMonkeytype(path) {
   const apeKey = process.env.MONKEYTYPE_API_KEY
+  const configFilePath = process.env.CONFIG_FILE_PATH
 
   if (!apeKey) {
-    const error = new Error('MONKEYTYPE_API_KEY is not configured on the server.')
+    const location = configFilePath ? ` Add it to ${configFilePath}.` : ''
+    const error = new Error(`MONKEYTYPE_API_KEY is not configured on the server.${location}`)
     error.status = 500
     throw error
   }
 
   const response = await fetch(`${monkeytypeApiUrl}${path}`, {
-    headers: { Authorization: `ApeKey ${apeKey}` }
+    headers: { Authorization: `ApeKey ${apeKey}` },
+    signal: AbortSignal.timeout(15_000),
   })
   const body = await response.json().catch(() => null)
 
@@ -43,6 +53,6 @@ app.get('/api/monkeytype/test-activity', async (_request, response) => {
   }
 })
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`)
+app.listen(port, host, () => {
+  console.log(`Server running at http://${host}:${port}`)
 })

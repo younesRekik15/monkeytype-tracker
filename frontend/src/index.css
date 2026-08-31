@@ -12,3 +12,45 @@ body{
     border-radius: 5px;
     border: 1px solid rgb(121, 121, 121);
 }
+
+#root {
+    width: fit-content;
+    height: fit-content;
+}
+
+.status-message {
+    box-sizing: border-box;
+    min-width: 260px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid rgb(121, 121, 121);
+    border-radius: 5px;
+    background-color: #0e0e0e;
+    color: #f5f5f5;
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+    -webkit-app-region: drag;
+}
+
+.status-message p {
+    margin: 0;
+}
+
+.status-message.error {
+    border-color: #ff6b6b;
+    color: #ffd6d6;
+}
+
+.status-message button {
+    padding: 5px 9px;
+    border: 1px solid #00ffff;
+    border-radius: 4px;
+    background: transparent;
+    color: #00ffff;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+}

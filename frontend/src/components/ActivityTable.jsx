@@ -1,12 +1,16 @@
+import { useState } from 'react'
 import './style.css'
 
-const ActivityTable = ({epochLastDay,testsByDayOrder}) => {
-    const subtractDay = (currentDay,days) =>{
-        return new Date(currentDay.getTime() - 86400000*days)
+const ActivityTable = ({ epochLastDay, testsByDayOrder }) => {
+    const [selectedDay, setSelectedDay] = useState(null)
+
+    const subtractDay = (currentDay, days) => {
+        const date = new Date(currentDay)
+        date.setDate(date.getDate() - days)
+        return date
     }
 
-    const readableDate = (epoch) => {
-        const date = new Date(epoch)
+    const readableDate = (date) => {
         return date.toLocaleDateString('en-US', {
             weekday: 'long',
             month: 'long',
@@ -25,20 +29,56 @@ const ActivityTable = ({epochLastDay,testsByDayOrder}) => {
     }
 
     const lastDay = new Date(epochLastDay)
-    const testsByDayOrderReverse = [...testsByDayOrder].reverse()
+    lastDay.setHours(0, 0, 0, 0)
+    const orderedTestsByDay = testsByDayOrder
+    const firstDay = subtractDay(lastDay, orderedTestsByDay.length - 1)
+    const calendarStart = subtractDay(firstDay, firstDay.getDay())
+    const calendarEnd = new Date(lastDay)
+    calendarEnd.setDate(lastDay.getDate() + (6 - lastDay.getDay()))
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
+    if (calendarEnd > today) {
+        calendarEnd.setTime(today.getTime())
+    }
+
+    const calendarDays = []
+
+    for (let currentDay = new Date(calendarStart); currentDay <= calendarEnd; currentDay.setDate(currentDay.getDate() + 1)) {
+        const dayIndex = Math.round((currentDay - firstDay) / 86400000)
+        const tests = dayIndex >= 0 && dayIndex < orderedTestsByDay.length
+            ? orderedTestsByDay[dayIndex]
+            : null
+        const isBeforeRange = currentDay < firstDay
+
+        calendarDays.push({
+            date: new Date(currentDay),
+            tests,
+            isBeforeRange,
+            isAfterRange: dayIndex >= orderedTestsByDay.length,
+        })
+    }
 
     return(
-        <div className="tests-container">
-            
-            {
-                testsByDayOrderReverse.map((tests,index) => {
-                    const currentDay = subtractDay(lastDay, index)
-                    return(
-                        <div key={index} className={`test-box level-${dayColorLevel(tests)}`} title={`${tests?tests===1?'1 test':`${tests} tests`:'no activity'} on ${readableDate(currentDay)}`}></div>
-                    )
-                })
-            }
+        <div className="activity-wrapper">
+            <div className="tests-container">
+            {calendarDays.map(({ date, tests, isBeforeRange, isAfterRange }) => (
+                <button
+                    key={date.getTime()}
+                    type="button"
+                    className={`test-box level-${dayColorLevel(tests)}${isBeforeRange ? ' before-range' : isAfterRange ? ' outside-range' : ''}`}
+                    title={`${tests ? tests === 1 ? '1 test' : `${tests} tests` : 'no activity'} on ${readableDate(date)}`}
+                    aria-label={`${tests ? tests === 1 ? '1 test' : `${tests} tests` : 'no activity'} on ${readableDate(date)}`}
+                    onClick={() => setSelectedDay({ date, tests })}
+                />
+            ))}
+            </div>
+            {selectedDay && (
+                <div className="activity-details" role="status">
+                    <strong>{readableDate(selectedDay.date)}</strong>
+                    <span>{selectedDay.tests ? `${selectedDay.tests} ${selectedDay.tests === 1 ? 'test' : 'tests'}` : 'No tests'}</span>
+                </div>
+            )}
         </div>
     )
 }

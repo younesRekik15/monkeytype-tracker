@@ -1,5 +1,4 @@
 const { spawn } = require('node:child_process')
-const { copyFileSync, existsSync } = require('node:fs')
 const path = require('node:path')
 const { app, BrowserWindow, screen } = require('electron')
 
@@ -37,19 +36,7 @@ const createWindow = () => {
 }
 
 const getEnvPath = () => {
-  const bundledEnvPath = path.join(basePath, '.env')
-
-  if (!isPackaged) {
-    return bundledEnvPath
-  }
-
-  const userEnvPath = path.join(app.getPath('userData'), '.env')
-
-  if (!existsSync(userEnvPath)) {
-    copyFileSync(bundledEnvPath, userEnvPath)
-  }
-
-  return userEnvPath
+  return path.join(basePath, '.env')
 }
 
 const startBackend = () => {
